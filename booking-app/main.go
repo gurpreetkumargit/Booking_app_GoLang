@@ -1,9 +1,7 @@
 package main
 
 import (
-	"booking-app/helper"
 	"fmt"
-	"strings"
 )
 
 // data (variables) for our conference
@@ -12,7 +10,12 @@ const conferenceTickets int = 50
 
 var conferenceName string = "GO conference"
 var remainingTickets uint = 50
-var bookings []string
+var bookings = make([]userData, 0)
+
+type userData struct {
+	firstName, lastName, email string
+	numOfTickets               uint
+}
 
 func main() {
 
@@ -25,7 +28,7 @@ func main() {
 		firstName, lastName, email, userTickets := getUserInput()
 
 		// checking validation (require for ticket booking) using func
-		isValidName, isValidEmail, isValidTicket := helper.UserInputValidation(firstName, lastName, email, userTickets, remainingTickets)
+		isValidName, isValidEmail, isValidTicket := validateUserInput(firstName, lastName, email, userTickets)
 
 		// if all validation of user input is correct then confirm booking
 		if isValidName && isValidEmail && isValidTicket {
@@ -53,7 +56,7 @@ func main() {
 			if !isValidTicket {
 				fmt.Println("The ticket counts you entered is incorrect.")
 			}
-			fmt.Println("Please fill your information age.")
+			fmt.Println("Please fill correct information .")
 		}
 
 	}
@@ -70,11 +73,11 @@ func greetUsers() {
 
 // get user input
 // declare the empty variable (will be filled by user input)
-func getUserInput() (string, string, string, int) {
+func getUserInput() (string, string, string, uint) {
 	var firstName string
 	var lastName string
 	var email string
-	var userTickets int
+	var userTickets uint
 
 	// taking input from user
 	fmt.Println("Enter your firstName: ")
@@ -94,12 +97,21 @@ func getUserInput() (string, string, string, int) {
 
 // book ticket
 
-func bookTicket(userTickets int, firstName string, lastName string, email string) {
+func bookTicket(userTickets uint, firstName string, lastName string, email string) {
 	// count remaining tickets
-	remainingTickets = remainingTickets - uint(userTickets)
+	remainingTickets = remainingTickets - userTickets
+
+	// creating map
+
+	userData := userData{
+		firstName:    firstName,
+		lastName:     lastName,
+		email:        email,
+		numOfTickets: userTickets}
 
 	// filling booking array with users data
-	bookings = append(bookings, firstName+" "+lastName)
+	bookings = append(bookings, userData)
+	fmt.Printf("list of all bookings : %v\n", bookings)
 
 	fmt.Printf("Thank you %v %v for booking %v tickets. You will receive a confirmation on your %v email\n", firstName, lastName, userTickets, email)
 
@@ -115,8 +127,7 @@ func getFirstName() []string {
 
 	// using for loop as for-each loop to take out only first name of user
 	for _, booking := range bookings {
-		names := strings.Fields(booking)
-		first_Names = append(first_Names, names[0])
+		first_Names = append(first_Names, booking.firstName)
 	}
 
 	return first_Names
