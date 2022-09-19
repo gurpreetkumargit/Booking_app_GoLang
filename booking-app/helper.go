@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func validateUserInput(firstName string, lastName string, email string, userTickets uint) (bool, bool, bool) {
+func ValidateUserInput(firstName string, lastName string, email string, userTickets uint, remainingTickets uint) (bool, bool, bool) {
 
 	isValidName := len(firstName) >= 3 && len(lastName) >= 3
 	isValidEmail := strings.Contains(email, "@")
